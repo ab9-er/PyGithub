@@ -536,7 +536,7 @@ class PullRequest(github.GithubObject.CompletableGithubObject):
             None,
             headers={'Accept': 'application/vnd.github.black-cat-preview+json'}
         )
-        
+
     def is_merged(self):
         """
         :calls: `GET /repos/:owner/:repo/pulls/:number/merge <http://developer.github.com/v3/pulls>`_
@@ -548,7 +548,7 @@ class PullRequest(github.GithubObject.CompletableGithubObject):
         )
         return status == 204
 
-    def merge(self, commit_message=github.GithubObject.NotSet):
+    def merge(self, commit_message=github.GithubObject.NotSet, squash=True):
         """
         :calls: `PUT /repos/:owner/:repo/pulls/:number/merge <http://developer.github.com/v3/pulls>`_
         :param commit_message: string
@@ -558,6 +558,7 @@ class PullRequest(github.GithubObject.CompletableGithubObject):
         post_parameters = dict()
         if commit_message is not github.GithubObject.NotSet:
             post_parameters["commit_message"] = commit_message
+        post_parameters["merge_method"] = "merge" if not squash else "squash"
         headers, data = self._requester.requestJsonAndCheck(
             "PUT",
             self.url + "/merge",
